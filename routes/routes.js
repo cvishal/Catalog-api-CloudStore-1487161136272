@@ -31,11 +31,11 @@ function populateDB() {
 			if(err){
 				console.log("Error inserting product ID: " + body.id + " to the items database: " + err );
 			}
-			else{   
+			else{
 				console.log("Successfully added product ID: " + body.id + " to the database.");
 			}
 		});
-	}   
+	}
 }
 
 // API Routes
@@ -50,9 +50,11 @@ app.post("/items", function(req, res) {
 
 	db.insert(data, function (err, body, headers) {
 		if (err) {
+			console.log("Error on insert : " + err);
 			return res.json({msg: "Error on insert. " + err});
 		}
 		else {
+			console.log("Item created successfully.");
 			return res.json({msg: "Successfully created item"});
 		}
 	});
@@ -63,9 +65,11 @@ app.get("/items/:id", function(req, res) {
 	var id = req.params.id;
 	db.get(id, function(err, body) {
 		if (err){
+			console.log("ERROR : Item with id " + id + " not found.");
 			return res.json({msg: "Error: could not find item: " + id + ". " + err});
 		}
 		else{
+			console.log("Item with id " + id + " found.");
 			return res.json(body);
 		}
 	});
@@ -75,9 +79,11 @@ app.get("/items/:id", function(req, res) {
 app.get("/items", function(req, res) {
 	db.list({include_docs: true}, function (err, body, headers) {
 		if (err) {
+			console.log("ERROR : Could not get all items.");
 			return res.json({msg: "Error getting all items. " + err});
 		}
 		else{
+			console.log("Fetched all items successfully.");
 			return res.json(body);
 		}
 	});
@@ -98,9 +104,11 @@ app.put("/items/:id", function(req, res) {
 			data._rev = body._rev;
 			db.insert(data, id, function(err, body, headers){
 				if(err){
+					console.log("ERROR : update item failed with id "+id+".");
 					return res.json({msg: "Error inserting for update. " + err});
 				}
 				else{
+					console.log("Item updated successfully with id "+body.id+".");
 					return res.json({msg: "Successfully updated item: " + body.id});
 				}
 			});
@@ -118,14 +126,16 @@ app.delete("/items/:id", function(req, res){
 		else{
 			db.destroy(id, body._rev, function(err, body){
 				if(err){
+					console.log("ERROR: Failed to delete item with id "+id+".");
 					return res.json({msg: "Error deleting item: " + id + ". " + err});
 				}
 				else{
+					console.log("Item deleted successfuly with id "+body.id+".");
 					return res.json({msg: "Successfully deleted item: " + body.id});
 				}
 			});
 		}
-	});  
+	});
 });
 
 };
